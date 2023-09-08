@@ -1,19 +1,17 @@
 package org.invoice.repository.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "user")
+
 public class User {
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Id
+    @Column(columnDefinition = "BINARY(16)", updatable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String userName;
 

@@ -1,5 +1,7 @@
 package org.invoice.controller;
 
+import jakarta.websocket.server.PathParam;
+import org.invoice.repository.entity.User;
 import org.invoice.service.UserService;
 import org.invoice.service.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,15 +9,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping(path = "/users/")
+@CrossOrigin(origins = "*")
 public class UserController {
     @Autowired
     private UserService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> listUsers() {
-        return ResponseEntity.ok("Hello world");
+    public ResponseEntity<List<UserDto>> listUsers() {
+        return ResponseEntity.ok(service.listUsers());
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -25,5 +31,11 @@ public class UserController {
         UserDto response = service.saveUser(user);
         return ResponseEntity.ok(response);
     }
+    @GetMapping(path = "{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> getById(@PathVariable UUID userId){
+        return ResponseEntity.ok(service.getUserById(userId));
+    }
+
+
 
 }
