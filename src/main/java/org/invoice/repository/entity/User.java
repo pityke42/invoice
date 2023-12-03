@@ -14,6 +14,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String userName;
+    @OneToOne
+    @JoinColumn(
+            name = "address_id",
+            referencedColumnName = "id"
+    )
+    private Address address;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
     public UUID getId() {
         return id;

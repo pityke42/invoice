@@ -1,11 +1,28 @@
-package org.invoice.service.dto;
+package org.invoice.repository.entity;
+
+import jakarta.persistence.*;
+
 import java.util.UUID;
-public class UserDto {
+
+@Entity
+@Table(name = "address")
+
+public class Address {
+    @Id
+    @Column(columnDefinition = "BINARY(16)", updatable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private String userName;
     private Integer postalCode;
     private String city;
     private String address;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Integer getPostalCode() {
         return postalCode;
@@ -29,21 +46,5 @@ public class UserDto {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 }

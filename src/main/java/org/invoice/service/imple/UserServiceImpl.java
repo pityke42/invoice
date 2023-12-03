@@ -1,7 +1,9 @@
 package org.invoice.service.imple;
 
 import org.hibernate.annotations.NotFound;
+import org.invoice.repository.AddressRepository;
 import org.invoice.repository.UserRepository;
+import org.invoice.repository.entity.Address;
 import org.invoice.repository.entity.User;
 import org.invoice.service.UserService;
 import org.invoice.service.dto.UserDto;
@@ -20,12 +22,20 @@ import java.util.stream.StreamSupport;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository repository;
+    @Autowired
+    private AddressRepository addressRepository;
     @Override
     public UserDto saveUser(UserDto user) {
+        Address addressEntity = new Address();
+        addressEntity.setAddress(user.getAddress());
+        addressEntity.setPostalCode(user.getPostalCode());
+        addressEntity.setCity(user.getCity());
+        Address managedAddressEntity = addressRepository.save(addressEntity);
         User userEntity = new User();
         userEntity.setUserName(user.getUserName());
-        User managedEntity = repository.save(userEntity);
-        return UserConverter.mapEntityToDto(managedEntity);
+        userEntity.setAddress(managedAddressEntity);
+        User managedUserEntity = repository.save(userEntity);
+        return UserConverter.mapEntityToDto(managedUserEntity);
     }
 
     @Override
@@ -41,4 +51,8 @@ public class UserServiceImpl implements UserService {
         return UserConverter.mapEntityToDto(optionalUser.get());
 
     }
+//    @Override
+//    public UserDto deleteUserById(UUID id){
+//
+//    }
 }
