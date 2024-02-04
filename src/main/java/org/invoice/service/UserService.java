@@ -9,4 +9,5 @@ public interface UserService {
     UserDto saveUser(UserDto user);
     List<UserDto> listUsers();
     UserDto getUserById(UUID id);
+    void deleteUserById(UUID id);
 }

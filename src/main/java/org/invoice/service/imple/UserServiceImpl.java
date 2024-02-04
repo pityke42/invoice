@@ -1,6 +1,5 @@
 package org.invoice.service.imple;
 
-import org.hibernate.annotations.NotFound;
 import org.invoice.repository.AddressRepository;
 import org.invoice.repository.UserRepository;
 import org.invoice.repository.entity.Address;
@@ -9,8 +8,10 @@ import org.invoice.service.UserService;
 import org.invoice.service.dto.UserDto;
 import org.invoice.service.imple.converter.UserConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +21,13 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
     private UserRepository repository;
-    @Autowired
     private AddressRepository addressRepository;
+    @Autowired
+    public UserServiceImpl(UserRepository repository, AddressRepository addressRepository){
+        this.addressRepository = addressRepository;
+        this.repository = repository;
+    }
     @Override
     public UserDto saveUser(UserDto user) {
         Address addressEntity = new Address();
@@ -37,10 +41,13 @@ public class UserServiceImpl implements UserService {
         User managedUserEntity = repository.save(userEntity);
         return UserConverter.mapEntityToDto(managedUserEntity);
     }
-
     @Override
     public List<UserDto> listUsers() {
-        return StreamSupport.stream(repository.findAll().spliterator(), false).map(UserConverter::mapEntityToDto).collect(Collectors.toList());
+        return StreamSupport
+                .stream(repository.findAll()
+                        .spliterator(), false)
+                .map(UserConverter::mapEntityToDto)
+                .collect(Collectors.toList());
     }
     @Override
     public UserDto getUserById(UUID id){
@@ -49,10 +56,11 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("User not found with id: " + id);
         }
         return UserConverter.mapEntityToDto(optionalUser.get());
-
     }
-//    @Override
-//    public UserDto deleteUserById(UUID id){
-//
-//    }
+    @Override
+    public void deleteUserById(UUID id) {
+        Optional<User> optionalUser = repository.findById(id);
+        User user = optionalUser.orElseThrow(() -> new HttpClientErrorException(HttpStatusCode.valueOf(400)));
+       repository.deleteById(user.getId());
+    }
 }
